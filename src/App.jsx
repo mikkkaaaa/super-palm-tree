@@ -1,9 +1,20 @@
 import React from 'react';
-import { RouterProvider } from 'react-router-dom';
-import router from './router';
+import { HashRouter, Routes, Route } from 'react-router-dom';
+
+import Home from './pages/home/home';
+import BreakOut from './games/Breakout';
+import NotFound from './pages/NotFound';
 
 function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <HashRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/breakout" element={<BreakOut />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </HashRouter>
+  );
 }
 
 export default App;

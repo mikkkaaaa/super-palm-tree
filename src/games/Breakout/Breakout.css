@@ -237,3 +237,35 @@
   box-shadow: 0 0 15px #00ffffcc;
   color: #00ffffee;
 }
+
+.readygo-screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.readygo-text {
+  font-size: 64px;
+  font-weight: bold;
+  color: cyan;
+  text-shadow: 0 0 10px #0ff;
+}
+
+.pre-ready-screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.pre-ready-screen .readygo-text {
+  font-size: 48px;
+  color: #00ffff;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}

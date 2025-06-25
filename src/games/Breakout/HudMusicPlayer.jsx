@@ -2,10 +2,14 @@ import React, { useRef, useState, useEffect } from 'react';
 import { FaPlay, FaPause, FaVolumeUp, FaForward } from 'react-icons/fa';
 import './breakout.css';
 
+import bg1 from '/assets/video/bg1.mp3';
+import bg2 from '/assets/video/bg2.mp3';
+import bg3 from '/assets/video/bg3.mp3';
+
 const playlist = [
-  { title: '星际旅程', src: '/assets/video/bg1.mp3' },
-  { title: '银河之光', src: '/assets/video/bg2.mp3' },
-  { title: '宇宙漫步', src: '/assets/video/bg3.mp3' },
+  { title: '星际旅程', src: bg1 },
+  { title: '银河之光', src: bg2 },
+  { title: '宇宙漫步', src: bg3 },
 ];
 
 export default function HudMusicPlayer() {
@@ -13,16 +17,49 @@ export default function HudMusicPlayer() {
   const containerRef = useRef(null);
   const [currentTrack, setCurrentTrack] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [volume, setVolume] = useState(0.5);
+  const [volume, setVolume] = useState(0.5); // 初始音量50%
   const [expanded, setExpanded] = useState(false);
 
-  // 初始播放
+  // 尝试自动播放 + 用户点击触发播放兜底
   useEffect(() => {
-    if (audioRef.current) {
+    const tryAutoPlay = () => {
+      if (!audioRef.current) return;
       audioRef.current.volume = volume;
-      audioRef.current.play().then(() => setIsPlaying(true)).catch(() => {});
-    }
+      audioRef.current.play()
+        .then(() => {
+          setIsPlaying(true);
+        })
+        .catch(() => {
+          // 自动播放失败，绑定用户点击后再播放
+          document.addEventListener('click', enableOnClickPlay);
+        });
+    };
+
+    const enableOnClickPlay = () => {
+      if (!audioRef.current) return;
+      audioRef.current.volume = volume;
+      audioRef.current.play().then(() => {
+        setIsPlaying(true);
+        document.removeEventListener('click', enableOnClickPlay);
+      }).catch(() => {});
+    };
+
+    tryAutoPlay();
+
+    return () => {
+      document.removeEventListener('click', enableOnClickPlay);
+    };
   }, []);
+
+  // 切换歌曲时自动播放
+  useEffect(() => {
+    if (!audioRef.current) return;
+    audioRef.current.load();
+    if (isPlaying) {
+      audioRef.current.volume = volume;
+      audioRef.current.play().catch(() => {});
+    }
+  }, [currentTrack]);
 
   const handlePlayPause = () => {
     if (!audioRef.current) return;
@@ -30,45 +67,31 @@ export default function HudMusicPlayer() {
       audioRef.current.pause();
       setIsPlaying(false);
     } else {
-      audioRef.current.play();
-      setIsPlaying(true);
+      audioRef.current.play().then(() => setIsPlaying(true)).catch(() => {});
     }
   };
 
   const handleNext = () => {
-    const nextTrack = (currentTrack + 1) % playlist.length;
-    setCurrentTrack(nextTrack);
-    setIsPlaying(true);
-    setTimeout(() => {
-      audioRef.current?.play();
-    }, 0);
+    setCurrentTrack((currentTrack + 1) % playlist.length);
+  };
+
+  const handleVolumeChange = (e) => {
+    const newVol = parseFloat(e.target.value);
+    setVolume(newVol);
+    if (audioRef.current) audioRef.current.volume = newVol;
   };
 
   const toggleExpanded = () => setExpanded(prev => !prev);
 
-  const handleVolumeChange = (e) => {
-    const newVolume = parseFloat(e.target.value);
-    setVolume(newVolume);
-    if (audioRef.current) audioRef.current.volume = newVolume;
-  };
-
-  // ✅ 添加点击页面任意位置关闭面板（点击外部时）
+  // 点击外部关闭控制器
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (
-        expanded &&
-        containerRef.current &&
-        !containerRef.current.contains(event.target)
-      ) {
+      if (expanded && containerRef.current && !containerRef.current.contains(event.target)) {
         setExpanded(false);
       }
     };
-
-    // 捕获阶段监听
     document.addEventListener('mousedown', handleClickOutside, true);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside, true);
-    };
+    return () => document.removeEventListener('mousedown', handleClickOutside, true);
   }, [expanded]);
 
   return (
@@ -106,10 +129,10 @@ export default function HudMusicPlayer() {
             width: '42px',
           }}
         >
-          <button onClick={handlePlayPause} className="btn small-btn">
+          <button onClick={handlePlayPause} className="btn small-btn" title={isPlaying ? "暂停" : "播放"}>
             {isPlaying ? <FaPause /> : <FaPlay />}
           </button>
-          <button onClick={handleNext} className="btn small-btn">
+          <button onClick={handleNext} className="btn small-btn" title="下一首">
             <FaForward />
           </button>
 
@@ -141,7 +164,11 @@ export default function HudMusicPlayer() {
         </div>
       )}
 
-      <audio ref={audioRef} src={playlist[currentTrack].src} onEnded={handleNext} loop={false} />
+      <audio
+        ref={audioRef}
+        src={playlist[currentTrack].src}
+        onEnded={handleNext}
+      />
     </div>
   );
 }
