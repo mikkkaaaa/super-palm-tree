@@ -1,0 +1,239 @@
+/* 整体黑色银河星空背景，页面全屏 */
+.breakout-app {
+  background: radial-gradient(ellipse at center, #000011 0%, #000000 100%);
+  height: 100vh;
+  width: 100vw;
+  color: #0ff;
+  font-family: 'Orbitron', monospace;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* GameScreen 容器，居中且宽度固定 */
+.game-screen-container {
+  width: 900px;
+  margin: 20px auto;
+  text-align: center;
+  position: relative;
+  z-index: 10;
+}
+
+/* HUD 容器 - 独立于画布之上 */
+.hud-container {
+  display: flex;
+  justify-content: center;
+  gap: 60px;
+  margin-bottom: 10px; /* 画布上方留空 */
+  padding: 12px 40px;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 16px;
+  box-shadow: 0 0 30px #0ff;
+  font-family: 'Orbitron', monospace;
+  color: #0ff;
+  user-select: none;
+}
+
+/* HUD 每个项目 */
+.hud-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hud-item .label {
+  font-size: 1rem;
+  opacity: 0.8;
+  letter-spacing: 1.5px;
+  text-shadow: 0 0 5px #0ff;
+}
+
+.hud-item .value {
+  font-size: 2rem;
+  font-weight: 700;
+  user-select: none;
+  text-shadow:
+    0 0 6px #0ff,
+    0 0 10px #00ffff,
+    0 0 14px #00ffff;
+}
+
+/* 画布样式 */
+.game-screen-container canvas {
+  border-radius: 20px;
+  border: 3px solid #00ffff;
+  box-shadow:
+    0 0 40px #00ffff,
+    inset 0 0 20px #003333;
+  background-color: #000011;
+  display: block;
+  margin: 0 auto;
+}
+
+/* 通用按钮样式 */
+.btn {
+  padding: 12px 30px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #00ffff, #006666);
+  border: none;
+  color: #000;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 0 10px #00ffff;
+  transition: box-shadow 0.3s ease;
+  user-select: none;
+}
+.btn:hover {
+  box-shadow: 0 0 30px #00ffff;
+}
+
+/* StartScreen 样式 */
+.start-screen {
+  text-align: center;
+  color: #0ff;
+  font-family: 'Orbitron', monospace;
+}
+.start-screen h1 {
+  font-size: 4rem;
+  margin-bottom: 40px;
+  text-shadow: 0 0 20px #0ff;
+}
+
+/* LevelSelect */
+.level-select {
+  text-align: center;
+  color: #0ff;
+  font-family: 'Orbitron', monospace;
+}
+.level-select h2 {
+  margin-bottom: 30px;
+  font-size: 2.5rem;
+  text-shadow: 0 0 12px #0ff;
+}
+.levels {
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+}
+.level-btn {
+  padding: 14px 30px;
+  font-size: 1.3rem;
+  border-radius: 14px;
+  border: 1.5px solid #00ffff;
+  background: #002b2b;
+  color: #0ff;
+  cursor: pointer;
+  transition: 0.3s;
+  box-shadow: 0 0 12px #00ffff;
+  min-width: 140px;
+  user-select: none;
+}
+.level-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.35;
+  box-shadow: none;
+}
+
+/* ReadyGo */
+.readygo-screen {
+  position: relative;
+  width: 900px;
+  height: 600px;
+  background: #000011;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #0ff;
+  font-family: 'Orbitron', monospace;
+}
+.readygo-text {
+  font-size: 8rem;
+  color: #0ff;
+  text-shadow:
+    0 0 15px #0ff,
+    0 0 30px #0ff,
+    0 0 50px #0ff;
+  animation: pulse 2s infinite;
+  user-select: none;
+}
+
+/* ResultScreen */
+.result-screen {
+  text-align: center;
+  color: #0ff;
+  font-family: 'Orbitron', monospace;
+  text-shadow: 0 0 12px #0ff;
+}
+.result-screen h1 {
+  font-size: 4.5rem;
+  margin-bottom: 20px;
+  user-select: none;
+}
+.result-buttons {
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+}
+
+/* 动画效果 */
+@keyframes popIn {
+  from {
+    transform: scale(1.2);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.1); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* 响应式 - 手机适配 */
+@media (max-width: 600px) {
+  .game-screen-container {
+    width: 100vw;
+    padding: 0 12px;
+  }
+  .hud-container {
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 15px;
+    padding: 10px 20px;
+  }
+  .hud-item .value {
+    font-size: 1.6rem;
+  }
+  .readygo-text {
+    font-size: 5rem;
+  }
+}
+
+.btn.small-btn {
+  padding: 6px 8px;
+  font-size: 14px;
+  background: rgba(0, 255, 255, 0.3);
+  border-radius: 8px;
+  border: none;
+  color: #00ffffcc;
+  cursor: pointer;
+  box-shadow: 0 0 6px #00ffff88;
+  transition: box-shadow 0.25s ease, background 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+
+.btn.small-btn:hover {
+  background: rgba(0, 255, 255, 0.5);
+  box-shadow: 0 0 15px #00ffffcc;
+  color: #00ffffee;
+}
